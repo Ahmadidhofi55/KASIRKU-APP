@@ -13,8 +13,6 @@ return new class extends Migration
     {
         Schema::create('transaksis', function (Blueprint $table) {
             $table->id('transaksi_id'); // Primary key otomatis
-            $table->string('qr_produk', 100);
-            $table->string('qr_img', 100);
             $table->unsignedBigInteger('member_id'); // Tidak perlu primary key di sini
             $table->foreign('member_id')->references('id')->on('members')->onUpdate('cascade')->onDelete('restrict');
             $table->unsignedBigInteger('user_id'); // Sesuaikan nama kolom untuk foreign key

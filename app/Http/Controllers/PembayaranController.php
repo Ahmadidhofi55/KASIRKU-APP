@@ -97,7 +97,7 @@ class PembayaranController extends Controller
         $validator = Validator::make($request->all(), [
             'name-edit2' => 'unique:pembayarans,name,' . $user->id,
             'data_pembayaran-edit2' => 'unique:pembayarans,data_pembayaran' . $user->id,
-            'img-edit2' => 'nullable|image|max:2048|mimes:png,jpg,svg'.$user->id,
+            'img-edit2' => 'nullable'
         ]);
 
         // Check if validation fails

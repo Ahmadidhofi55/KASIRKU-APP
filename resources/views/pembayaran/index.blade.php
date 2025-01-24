@@ -155,7 +155,7 @@
                     $('#create-form')[0].reset();
                     // Clear form
                     $('#name').val('');
-                    $('#data_pembayaran').vall('');
+                    $('#data_pembayaran').val('');
                     $('#img').val('');
 
 

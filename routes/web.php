@@ -7,6 +7,7 @@ use App\Http\Controllers\JenisController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MerekController;
 use App\Http\Controllers\PembayaranController;
+use App\Http\Controllers\ProdukController;
 
 /*
 |--------------------------------------------------------------------------
@@ -70,3 +71,11 @@ Route::get('/member/show/{id}',[MemberController::class,'show'])->name('member.s
 Route::post('/member/store',[MemberController::class,'store'])->name('member.store')->middleware('auth');
 Route::post('/member/update/{id}', [MemberController::class, 'update'])->name('member.update')->middleware('auth');
 Route::delete('/member/delete/{id}',[MemberController::class,'destroy'])->name('member.destroy')->middleware('auth');
+
+//Produk
+Route::get('/produk',[ProdukController::class,'index'])->name('produk.index')->middleware('auth');
+Route::get('/produk/read', [ProdukController::class,'get'])->name('produk.read')->middleware('auth');
+Route::get('/produk/show/{id}',[ProdukController::class,'show'])->name('produk.show')->middleware('auth');
+Route::post('/produk/store',[ProdukController::class,'store'])->name('produk.store')->middleware('auth');
+Route::post('/produk/update/{id}', [ProdukController::class, 'update'])->name('produk.update')->middleware('auth');
+Route::delete('/produk/delete/{id}',[ProdukController::class,'destroy'])->name('produk.destroy')->middleware('auth');

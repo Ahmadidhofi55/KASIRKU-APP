@@ -11,7 +11,6 @@ class Produk extends Model
 
     protected $fillable = [
 
-        'supliyer_id',
         'qr_produk',
         'qr_img',
         'merek_id',
@@ -20,6 +19,7 @@ class Produk extends Model
         'harga_jual',
         'harga_beli',
         'diskon',
+        'supliyer_id',
         'tgl_exp',
 
     ];

@@ -68,7 +68,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="">
+                <a class="nav-link" href="{{ route('produk.index') }}">
                     <i class="fas fa-archive"></i>
                     <span>Produk</span></a>
             </li>
@@ -95,6 +95,12 @@
                 <a class="nav-link" href="{{ route('member.index') }}">
                     <i class="fas fa-user-friends"></i>
                     <span>Member</span></a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('supliyer.index') }}">
+                    <i class="fas fa-warehouse"></i>
+                    <span>Supliyer</span></a>
             </li>
 
             <!-- Divider -->

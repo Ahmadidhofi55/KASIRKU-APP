@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreign('member_id')->references('id')->on('members')->onUpdate('cascade')->onDelete('restrict');
             $table->unsignedBigInteger('user_id'); // Sesuaikan nama kolom untuk foreign key
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('restrict');
-            $table->string('total_harga', 100);
+            $table->decimal('total_harga', 15,2);
             $table->timestamps();
         });
     }

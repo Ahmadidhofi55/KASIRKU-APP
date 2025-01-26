@@ -1,13 +1,17 @@
 <?php
 
+use App\Models\Jenis;
+use App\Models\Merek;
+use App\Models\Supliyer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JenisController;
-use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MerekController;
-use App\Http\Controllers\PembayaranController;
+use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ProdukController;
+use App\Http\Controllers\PembayaranController;
+use App\Http\Controllers\SupliyerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -79,3 +83,27 @@ Route::get('/produk/show/{id}',[ProdukController::class,'show'])->name('produk.s
 Route::post('/produk/store',[ProdukController::class,'store'])->name('produk.store')->middleware('auth');
 Route::post('/produk/update/{id}', [ProdukController::class, 'update'])->name('produk.update')->middleware('auth');
 Route::delete('/produk/delete/{id}',[ProdukController::class,'destroy'])->name('produk.destroy')->middleware('auth');
+
+//Supliyer
+Route::get('/supliyer',[SupliyerController::class,'index'])->name('supliyer.index')->middleware('auth');
+Route::get('/supliyer/read', [SupliyerController::class,'get'])->name('supliyer.read')->middleware('auth');
+Route::get('/supliyer/show/{id}',[SupliyerController::class,'show'])->name('supliyer.show')->middleware('auth');
+Route::post('/supliyer/store',[SupliyerController::class,'store'])->name('supliyer.store')->middleware('auth');
+Route::post('/supliyer/update/{id}', [SupliyerController::class, 'update'])->name('supliyer.update')->middleware('auth');
+Route::delete('/supliyer/delete/{id}',[SupliyerController::class,'destroy'])->name('supliyer.destroy')->middleware('auth');
+
+
+//Produk Create
+Route::get('/produk/reading', [ProdukController::class,'create'])->name('produk.reading')->middleware('auth');
+
+Route::get('/api/merek', function () {
+    return Merek::all(['id', 'name']);
+});
+
+Route::get('/api/jenis', function () {
+    return Jenis::all(['id', 'name']);
+});
+
+Route::get('/api/supliyer', function () {
+    return Supliyer::all(['id', 'name']);
+});

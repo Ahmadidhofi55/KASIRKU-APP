@@ -13,18 +13,20 @@ return new class extends Migration
     {
         Schema::create('produks', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('supliyer_id');
-            $table->foreign('supliyer_id')->references('id')->on('supliyers')->onUpdate('cascade')->onDelete('restrict');
+            $table->string('name',100);
             $table->string('qr_produk',100);
             $table->string('qr_img',100);
+            $table->string('img',100);
+            $table->unsignedBigInteger('supliyer_id');
+            $table->foreign('supliyer_id')->references('id')->on('supliyers')->onUpdate('cascade')->onDelete('restrict');
             $table->unsignedBigInteger('merek_id');
             $table->foreign('merek_id')->references('id')->on('mereks')->onUpdate('cascade')->onDelete('restrict');
             $table->unsignedBigInteger('jenis_id');
             $table->foreign('jenis_id')->references('id')->on('mereks')->onUpdate('cascade')->onDelete('restrict');
-            $table->string('stok',11);
-            $table->string('harga_beli',100);
-            $table->string('harga_jual',100);
-            $table->string('diskon',100);
+            $table->decimal('stok',15,2);
+            $table->decimal('harga_beli',15,2);
+            $table->decimal('harga_jual',15,2);
+            $table->decimal('diskon', 15, 2)->nullable(); // Diskon dapat null
             $table->date('tgl_exp');
             $table->timestamps();
         });

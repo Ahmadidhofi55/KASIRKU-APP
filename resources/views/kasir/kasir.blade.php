@@ -143,11 +143,11 @@
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
                                 <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                    PRODUK HABIS</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800 " id="produkhabis"></div>
+                                    SUPLIYER</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800 " id="supliyer"></div>
                             </div>
                             <div class="col-auto">
-                                <i class="fas fa-retweet fa-2x text-bg-dark"></i>
+                                <i class="fas fa-warehouse fa-2x text-bg-dark"></i>
                             </div>
                         </div>
                     </div>
@@ -230,111 +230,26 @@
                     // Update the total harga
                     document.getElementById('total_harga').textContent =
                         "Rp. " + new Intl.NumberFormat('id-ID').format(data.total_harga);
+                    //count total transaksi
+                    document.getElementById('transaksicount').textContent = data.count;
+                    //total data pembayaran
+                    document.getElementById('pembayaran').textContent = data.pembayaran;
+                    //count total produk
+                    document.getElementById('produk').textContent = data.produk;
+                    //count supliyer
+                    document.getElementById('supliyer').textContent = data.supliyer;
+                    //produk habis
+                    //document.getElementById('produkhabis').textContent = data.produkhabis;
+                    //count jenis produk
+                    document.getElementById('jenisproduk').textContent = data.jenisproduk;
+                    //count merek
+                    document.getElementById('merek').textContent = data.merek;
+                    //count member
+                    document.getElementById('member').textContent = data.member;
                 })
                 .catch(error => {
                     console.error('Error fetching total harga:', error);
                     document.getElementById('total_harga').textContent = 'Error';
-                });
-        });
-
-        //fetch data total transaksi
-        document.addEventListener("DOMContentLoaded", function() {
-            // Fetch data using AJAX
-            fetch("{{ route('getTransaksiCount') }}")
-                .then(response => response.json())
-                .then(data => {
-                    // Update the transaksi count
-                    document.getElementById('transaksicount').textContent = data.count;
-                })
-                .catch(error => {
-                    console.error('Error fetching transaksi count:', error);
-                    document.getElementById('transaksicount').textContent = 'Error';
-                });
-        });
-        //fecth data total metode pembayaran
-        document.addEventListener("DOMContentLoaded", function() {
-            // Fetch data using AJAX
-            fetch("{{ route('getTransaksiCount') }}")
-                .then(response => response.json())
-                .then(data => {
-                    // Update the transaksi count
-                    document.getElementById('pembayaran').textContent = data.pembayaran;
-                })
-                .catch(error => {
-                    console.error('Error fetching pembayaran count:', error);
-                    document.getElementById('pembayaran').textContent = 'Error';
-                });
-        });
-        //fecth data total produk
-        document.addEventListener("DOMContentLoaded", function() {
-            // Fetch data using AJAX
-            fetch("{{ route('getTransaksiCount') }}")
-                .then(response => response.json())
-                .then(data => {
-                    // Update the transaksi count
-                    document.getElementById('produk').textContent = data.produk;
-                })
-                .catch(error => {
-                    console.error('Error fetching produk count:', error);
-                    document.getElementById('produk').textContent = 'Error';
-                });
-        });
-
-
-        //fecth data produk habis
-        document.addEventListener("DOMContentLoaded", function() {
-            // Fetch data using AJAX
-            fetch("{{ route('getTransaksiCount') }}")
-                .then(response => response.json())
-                .then(data => {
-                    // Update the transaksi count
-                    document.getElementById('produkhabis').textContent = data.produkhabis;
-                })
-                .catch(error => {
-                    console.error('Error fetching transaksi count:', error);
-                    document.getElementById('produkhabis').textContent = 'Error';
-                });
-        });
-        //fecth data jenis produk
-        document.addEventListener("DOMContentLoaded", function() {
-            // Fetch data using AJAX
-            fetch("{{ route('getTransaksiCount') }}")
-                .then(response => response.json())
-                .then(data => {
-                    // Update the transaksi count
-                    document.getElementById('jenisproduk').textContent = data.jenisproduk;
-                })
-                .catch(error => {
-                    console.error('Error fetching transaksi count:', error);
-                    document.getElementById('jenisproduk').textContent = 'Error';
-                });
-        });
-        //fetch data merek produk
-        document.addEventListener("DOMContentLoaded", function() {
-            // Fetch data using AJAX
-            fetch("{{ route('getTransaksiCount') }}")
-                .then(response => response.json())
-                .then(data => {
-                    // Update the transaksi count
-                    document.getElementById('merek').textContent = data.merek;
-                })
-                .catch(error => {
-                    console.error('Error fetching merek count:', error);
-                    document.getElementById('merek').textContent = 'Error';
-                });
-        });
-        //fetch data member
-        document.addEventListener("DOMContentLoaded", function() {
-            // Fetch data using AJAX
-            fetch("{{ route('getTransaksiCount') }}")
-                .then(response => response.json())
-                .then(data => {
-                    // Update the transaksi count
-                    document.getElementById('member').textContent = data.member;
-                })
-                .catch(error => {
-                    console.error('Error fetching merek count:', error);
-                    document.getElementById('member').textContent = 'Error';
                 });
         });
         //logout

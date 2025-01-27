@@ -7,6 +7,7 @@ use App\Models\Member;
 use App\Models\Merek;
 use App\Models\Pembayaran;
 use App\Models\Produk;
+use App\Models\Supliyer;
 use App\Models\Transaksi;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
@@ -62,8 +63,9 @@ class HomeController extends Controller
         $jenisproduk = Jenis::count();
         $merek = Merek::count();
         $member = Member::count();
+        $supliyer = Supliyer::count();
         //totalharga
-        return response()->json(['total_harga'=> $totalharga,'count' => $transaksiCount,'pembayaran'=> $pembayanCount,'produk'=>$produkCount, 'produkhabis'=>$produkhabis ,'jenisproduk'=>$jenisproduk,'merek'=>$merek,'member'=>$member]);
+        return response()->json(['total_harga'=> $totalharga,'count' => $transaksiCount,'pembayaran'=> $pembayanCount,'produk'=>$produkCount, 'produkhabis'=>$produkhabis ,'jenisproduk'=>$jenisproduk,'merek'=>$merek,'member'=>$member,'supliyer'=>$supliyer]);
     }
     /**
 

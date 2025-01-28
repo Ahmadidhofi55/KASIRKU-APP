@@ -23,10 +23,10 @@ return new class extends Migration
             $table->foreign('merek_id')->references('id')->on('mereks')->onUpdate('cascade')->onDelete('restrict');
             $table->unsignedBigInteger('jenis_id');
             $table->foreign('jenis_id')->references('id')->on('mereks')->onUpdate('cascade')->onDelete('restrict');
-            $table->decimal('stok',15,2);
-            $table->decimal('harga_beli',15,2);
-            $table->decimal('harga_jual',15,2);
-            $table->decimal('diskon', 15, 2)->nullable(); // Diskon dapat null
+            $table->string('stok',100);
+            $table->string('harga_beli',100);
+            $table->string('harga_jual',100);
+            $table->string('diskon', 100)->nullable(); // Diskon dapat null
             $table->date('tgl_exp');
             $table->timestamps();
         });

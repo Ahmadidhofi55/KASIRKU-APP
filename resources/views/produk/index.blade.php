@@ -212,7 +212,6 @@
             let diskon = $('#diskon').val();
             let tgl_exp = $('#tgl_exp').val();
             let token = $('meta[name="csrf-token"]').attr('content');
-
             // Buat objek FormData
             let formData = new FormData();
             formData.append('name', name);
@@ -370,7 +369,7 @@
                 }
             });
         });
-   
+
         function deleteData(id) {
             Swal.fire({
                 title: 'Konfirmasi',

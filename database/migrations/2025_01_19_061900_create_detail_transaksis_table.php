@@ -20,9 +20,9 @@ return new class extends Migration
             $table->unsignedBigInteger('pmb_id');
             $table->foreign('pmb_id')->references('id')->on('pembayarans')->onUpdate('cascade')->onDelete('restrict');
             $table->string('jumlah',100);
-            $table->decimal('harga_satuan', 15, 2);
-            $table->decimal('diskon', 15, 2)->nullable(); // Diskon dapat null
-            $table->decimal('subtotal', 15, 2);
+            $table->string('harga_satuan', 100);
+            $table->string('diskon', 100)->nullable(); // Diskon dapat null
+            $table->string('subtotal', 100);
             $table->timestamps();
         });
     }

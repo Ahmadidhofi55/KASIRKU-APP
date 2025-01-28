@@ -61,14 +61,14 @@ class ProdukController extends Controller
         $jenis = Jenis::latest()->get();
         $merek = Merek::latest()->get();
         $supliyer = Supliyer::latest()->get();
-        return view('produk.create',compact('jenis','merek','supliyer'));
+        return view('produk.create', compact('jenis', 'merek', 'supliyer'));
     }
 
     public function store(Request $request)
     {
         // define validation rules
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:100',
+            'name' => 'required',
             'qr_produk' => 'required',
             'qr_img' => 'required|image|mimes:png,jpg',
             'img' => 'required|image|mimes:png,jpg,svg,jfif|max:2048',
@@ -78,7 +78,7 @@ class ProdukController extends Controller
             'stok' => 'required',
             'harga_jual' => 'required',
             'harga_beli' => 'required',
-            'diskon' => 'required',
+            'diskon' => 'nullable',
             'tgl_exp' => 'required',
         ]);
 
@@ -125,6 +125,7 @@ class ProdukController extends Controller
             'data' => $produk
         ]);
     }
+
 
     /**
      * Display the specified resource.

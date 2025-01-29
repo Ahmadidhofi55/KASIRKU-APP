@@ -406,28 +406,52 @@
         }
 
         $('body').on('click', '#btn-edit-post', function() {
-            let user_id = $(this).data('id');
+    let user_id = $(this).data('id');
 
-            // Fetch detail post with ajax
-            $.ajax({
-                url: `/produk/show/${user_id}`,
-                type: "GET",
-                cache: false,
-                success: function(response) {
-                    // Fill data to form
-                    $('#user_id').val(response.id);
-                    $('#name-edit').val(response.name);
-                    $('#img-edit').attr('src', '/images/' + response.img);
+    // Fetch detail post with ajax
+    $.ajax({
+        url: `/produk/show/${user_id}`,
+        type: "GET",
+        cache: false,
+        success: function(response) {
+            // Fill data to form
+            $('#user_id').val(response.id);
+            $('#name-edit').val(response.name);
+            $('#qr_produk-edit').val(response.qr_produk);
+            $('#qr_img-edit').attr('src', '/images/' + response.qr_img);
+            $('#img-edit').attr('src', '/images/' + response.img);
+            $('#stok-edit').val(response.stok);
+            $('#harga_jual-edit').val(response.harga_jual);
+            $('#harga_beli-edit').val(response.harga_beli);
+            $('#diskon-edit').val(response.diskon);
+            $('#tgl_exp-edit').val(response.tgl_exp);
 
-                    // Open modal
-                    $('#modal-edit').modal('show');
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    // Handle error case
-                    console.log("Terjadi kesalahan dalam permintaan Ajax:", textStatus, errorThrown);
-                }
+            // Fetch and populate dropdowns for merek, jenis, and supliyer
+            $.get('/api/merek', function(mereks) {
+                let merekOptions = mereks.map(merek => `<option value="${merek.id}" ${merek.id == response.merek_id ? 'selected' : ''}>${merek.name}</option>`);
+                $('#merek_id-edit').html(merekOptions);
             });
-        });
+
+            $.get('/api/jenis', function(jeniss) {
+                let jenisOptions = jeniss.map(jenis => `<option value="${jenis.id}" ${jenis.id == response.jenis_id ? 'selected' : ''}>${jenis.name}</option>`);
+                $('#jenis_id-edit').html(jenisOptions);
+            });
+
+            $.get('/api/supliyer', function(supliyers) {
+                let supliyerOptions = supliyers.map(supliyer => `<option value="${supliyer.id}" ${supliyer.id == response.supliyer_id ? 'selected' : ''}>${supliyer.name}</option>`);
+                $('#supliyer_id-edit').html(supliyerOptions);
+            });
+
+            // Open modal
+            $('#modal-edit').modal('show');
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            // Handle error case
+            console.log("Terjadi kesalahan dalam permintaan Ajax:", textStatus, errorThrown);
+        }
+    });
+});
+
 
         // Action update post
         $('#update').click(function(e) {

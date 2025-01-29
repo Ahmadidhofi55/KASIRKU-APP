@@ -39,7 +39,7 @@ class ProdukController extends Controller
                 })
                 ->addColumn('action', function ($row) {
                     $actionBtn = '
-                        <a href="javascript:void(0)" id="btn-view-post" data-id="' . $row->id . '" class="view btn btn-success btn-sm">
+                          <a href="javascript:void(0)" id="btn-view-post" data-id="' . $row->id . '" class="view btn btn-success btn-sm">
                             <i class="fas fa-eye"></i>
                         </a>
                         <a href="javascript:void(0)" data-id="' . $row->id . '" id="btn-edit-post" class="edit btn btn-primary btn-sm">
@@ -56,7 +56,7 @@ class ProdukController extends Controller
     }
 
 
-    public function create()
+    public function reading()
     {
         $jenis = Jenis::latest()->get();
         $merek = Merek::latest()->get();

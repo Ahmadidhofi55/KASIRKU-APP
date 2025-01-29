@@ -93,8 +93,8 @@ Route::post('/supliyer/update/{id}', [SupliyerController::class, 'update'])->nam
 Route::delete('/supliyer/delete/{id}',[SupliyerController::class,'destroy'])->name('supliyer.destroy')->middleware('auth');
 
 
-//Produk Create
-Route::get('/produk/reading', [ProdukController::class,'create'])->name('produk.reading')->middleware('auth');
+//Produk Reading
+Route::get('/produk/reading', [ProdukController::class,'reading'])->name('produk.reading')->middleware('auth');
 
 Route::get('/api/merek', function () {
     return Merek::all(['id', 'name']);

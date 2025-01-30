@@ -41,7 +41,11 @@ class JenisController extends Controller
 
         // check if validation fails
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi Gagal!',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
         // process the image
@@ -100,9 +104,12 @@ class JenisController extends Controller
 
         // Check if validation fails
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi Gagal!',
+                'errors' => $validator->errors()
+            ], 422);
         }
-
         // Process the image
         if ($request->hasFile('img-edit2')) {
             // Hapus gambar lama jika ada
@@ -138,18 +145,33 @@ class JenisController extends Controller
      */
     public function destroy($id)
     {
-        $jenis = Jenis::findOrFail($id);
+        try {
+            // Cari data jenis berdasarkan ID
+            $jenis = Jenis::findOrFail($id);
 
-        // Delete the associated image if it exists
-        if ($jenis->img) {
-            $imagePath = public_path('images') . '/' . $jenis->img;
-            if (file_exists($imagePath)) {
-                unlink($imagePath);
+            // Hapus gambar jika ada
+            if (!empty($jenis->img)) {
+                $imagePath = public_path('images') . '/' . $jenis->img;
+
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
             }
+
+            // Hapus data dari database
+            $jenis->delete();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Jenis Produk Berhasil Dihapus'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menghapus jenis produk. Terjadi kesalahan!',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        $jenis->delete();
-
-        return response()->json(['message' => 'Jenis Produk Berhasil Dihapus']);
     }
+
 }

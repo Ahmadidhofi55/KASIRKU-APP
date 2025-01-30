@@ -84,7 +84,11 @@ class ProdukController extends Controller
 
         // check if validation fails
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi Gagal!',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
         if ($request->hasFile('qr_img')) {
@@ -171,7 +175,11 @@ class ProdukController extends Controller
 
         // Check if validation fails
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi Gagal!',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
         if ($request->hasFile('qr_img-edit2')) {
@@ -235,24 +243,20 @@ class ProdukController extends Controller
      */
     public function destroy($id)
     {
-        $produk = Produk::findOrFail($id);
+        try {
+            $supliyer = Supliyer::findOrFail($id);
+            $supliyer->delete();
 
-        // Delete the associated image if it exists
-        if ($produk->qr_img) {
-            $imagePath = public_path('images') . '/' . $produk->qr_img;
-            if (file_exists($imagePath)) {
-                unlink($imagePath);
-            }
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Supliyer Berhasil Dihapus'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menghapus supliyer. Terjadi kesalahan!',
+                'error' => $e->getMessage()
+            ], 500);
         }
-        if ($produk->img) {
-            $imagePath = public_path('images') . '/' . $produk->img;
-            if (file_exists($imagePath)) {
-                unlink($imagePath);
-            }
-        }
-
-        $produk->delete();
-
-        return response()->json(['message' => 'Produk deleted successfully']);
     }
 }

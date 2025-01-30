@@ -43,7 +43,11 @@ class MemberController extends Controller
 
         // check if validation fails
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi Gagal!',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
         // create user
@@ -94,7 +98,11 @@ class MemberController extends Controller
 
         // Check if validation fails
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi Gagal!',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
         // Update the user
@@ -118,10 +126,23 @@ class MemberController extends Controller
      */
     public function destroy($id)
     {
-        $member = Member::findOrFail($id);
+        try {
+            // Cari member berdasarkan ID
+            $member = Member::findOrFail($id);
 
-        $member->delete();
+            // Hapus data member
+            $member->delete();
 
-        return response()->json(['message' => 'Member Berhasil Dihapus']);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Member Berhasil Dihapus'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menghapus member. Terjadi kesalahan!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

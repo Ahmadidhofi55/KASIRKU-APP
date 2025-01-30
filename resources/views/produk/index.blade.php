@@ -270,140 +270,89 @@
                     // Mengambil data terbaru setelah memasukkan data baru
                 },
                 error: function(error) {
-                    if (error.responseJSON.name[0]) {
-                        // Show alert
-                        $('#alert-name').removeClass('d-none');
-                        $('#alert-name').addClass('d-block');
+                        if (error.responseJSON && error.responseJSON.errors) {
+                            let errorMessages = '';
 
-                        // Add message to alert
-                        $('#alert-name').html(error.responseJSON.name[0]);
-                    }
-                    if (error.responseJSON.qr_produk[0]) {
-                        // Show alert
-                        $('#alert-qr_produk').removeClass('d-none');
-                        $('#alert-qr_produk').addClass('d-block');
+                            // Loop melalui semua error dan tambahkan ke pesan
+                            $.each(error.responseJSON.errors, function(key, messages) {
+                                errorMessages += messages[0] + '<br>';
+                            });
 
-                        // Add message to alert
-                        $('#alert-qr_produk').html(error.responseJSON.qr_produk[0]);
+                            // Tampilkan SweetAlert dengan pesan error
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Validasi Gagal!',
+                                html: errorMessages,
+                            });
+                        } else {
+                            // Tangani error umum
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Terjadi kesalahan!',
+                                text: 'Tidak dapat memproses permintaan.',
+                            });
+                        }
                     }
-                    if (error.responseJSON.qr_img[0]) {
-                        // Show alert
-                        $('#alert-qr_img').removeClass('d-none');
-                        $('#alert-qr_img').addClass('d-block');
-
-                        // Add message to alert
-                        $('#alert-qr_img').html(error.responseJSON.qr_img[0]);
-                    }
-                    if (error.responseJSON.img[0]) {
-                        // Show alert
-                        $('#alert-img').removeClass('d-none');
-                        $('#alert-img').addClass('d-block');
-
-                        // Add message to alert
-                        $('#alert-img').html(error.responseJSON.img[0]);
-                    }
-                    if (error.responseJSON.merek_id[0]) {
-                        // Show alert
-                        $('#alert-merek_id').removeClass('d-none');
-                        $('#alert-merek_id').addClass('d-block');
-
-                        // Add message to alert
-                        $('#alert-merek_id').html(error.responseJSON.merek_id[0]);
-                    }
-                    if (error.responseJSON.jenis_id[0]) {
-                        // Show alert
-                        $('#alert-jenis_id').removeClass('d-none');
-                        $('#alert-jenis_id').addClass('d-block');
-
-                        // Add message to alert
-                        $('#alert-jenis_id').html(error.responseJSON.jenis_id[0]);
-                    }
-                    if (error.responseJSON.supliyer_id[0]) {
-                        // Show alert
-                        $('#alert-supliyer_id').removeClass('d-none');
-                        $('#alert-supliyer_id').addClass('d-block');
-
-                        // Add message to alert
-                        $('#alert-supliyer_id').html(error.responseJSON.supliyer_id[0]);
-                    }
-                    if (error.responseJSON.stok[0]) {
-                        // Show alert
-                        $('#alert-stok').removeClass('d-none');
-                        $('#alert-stok').addClass('d-block');
-
-                        // Add message to alert
-                        $('#alert-stok').html(error.responseJSON.stok[0]);
-                    }
-                    if (error.responseJSON.harga_jual[0]) {
-                        // Show alert
-                        $('#alert-harga_jual').removeClass('d-none');
-                        $('#alert-harga_jual').addClass('d-block');
-
-                        // Add message to alert
-                        $('#alert-harga_jual').html(error.responseJSON.harga_jual[0]);
-                    }
-                    if (error.responseJSON.harga_beli[0]) {
-                        // Show alert
-                        $('#alert-harga_beli').removeClass('d-none');
-                        $('#alert-harga_beli').addClass('d-block');
-
-                        // Add message to alert
-                        $('#alert-harga_beli').html(error.responseJSON.harga_beli[0]);
-                    }
-                    if (error.responseJSON.diskon[0]) {
-                        // Show alert
-                        $('#alert-diskon').removeClass('d-none');
-                        $('#alert-diskon').addClass('d-block');
-
-                        // Add message to alert
-                        $('#alert-diskon').html(error.responseJSON.diskon[0]);
-                    }
-                    if (error.responseJSON.tgl_exp[0]) {
-                        // Show alert
-                        $('#alert-tgl_exp').removeClass('d-none');
-                        $('#alert-tgl_exp').addClass('d-block');
-
-                        // Add message to alert
-                        $('#alert-tgl_exp').html(error.responseJSON.tgl_exp[0]);
-                    }
-                }
             });
         });
 
         function deleteData(id) {
-            Swal.fire({
-                title: 'Konfirmasi',
-                text: 'Apakah Anda yakin ingin menghapus data ini?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Hapus',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: '/produk/delete/' + id,
-                        type: 'DELETE',
-                        dataType: 'json',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        success: function(response) {
-                            Swal.fire({
-                                title: 'Sukses',
-                                text: response.message,
-                                icon: 'success',
-                                timer: 2000
-                            });
-                            var dataTable = $('#dataTable').DataTable();
-                            dataTable.ajax.reload(null, false);
-                            // Mengambil data terbaru setelah menghapus
-                        }
-                    });
-                }
-            });
-        }
+                Swal.fire({
+                    title: 'Konfirmasi',
+                    text: 'Apakah Anda yakin ingin menghapus data ini?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Hapus',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/supliyer/delete/' + id,
+                            type: 'DELETE',
+                            dataType: 'json',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success: function(response) {
+                                if (response.status === "success") {
+                                    Swal.fire({
+                                        title: 'Sukses',
+                                        text: response.message,
+                                        icon: 'success',
+                                        timer: 1500
+                                    });
+
+                                    // Reload DataTable jika ada
+                                    var dataTable = $('#dataTable').DataTable();
+                                    if (dataTable) {
+                                        dataTable.ajax.reload(null, false);
+                                    }
+                                } else {
+                                    Swal.fire({
+                                        title: 'Gagal',
+                                        text: response.message,
+                                        icon: 'error'
+                                    });
+                                }
+                            },
+                            error: function(xhr) {
+                                let errorMessage = "Terjadi kesalahan saat menghapus data.";
+                                if (xhr.responseJSON && xhr.responseJSON.message) {
+                                    errorMessage = xhr.responseJSON.message;
+                                }
+
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: errorMessage,
+                                    icon: 'error'
+                                });
+                            }
+                        });
+                    }
+                });
+            }
 
         $('body').on('click', '#btn-edit-post', function() {
             let user_id = $(this).data('id');
@@ -678,70 +627,29 @@
                         // Mengambil data terbaru setelah edit
                     },
                     error: function(error) {
-                        // Error handling
-                        if (error.responseJSON.name) {
-                            $('#alert-name-edit2').removeClass('d-none');
-                            $('#alert-name-edit2').addClass('d-block');
-                            $('#alert-name-edit2').html(error.responseJSON.name[0]);
-                        }
-                        if (error.responseJSON.qr_produk) {
-                            $('#alert-qr_produk-edit2').removeClass('d-none');
-                            $('#alert-qr_produk-edit2').addClass('d-block');
-                            $('#alert-qr_produk-edit2').html(error.responseJSON.qr_produk[0]);
-                        }
-                        if (error.responseJSON.qr_img) {
-                            $('#alert-qr_img-edit2').removeClass('d-none');
-                            $('#alert-qr_img-edit2').addClass('d-block');
-                            $('#alert-qr_img-edit2').html(error.responseJSON.qr_img[0]);
-                        }
-                        if (error.responseJSON.img) {
-                            $('#alert-img-edit2').removeClass('d-none');
-                            $('#alert-img-edit2').addClass('d-block');
-                            $('#alert-img-edit2').html(error.responseJSON.img[0]);
-                        }
-                        if (error.responseJSON.merek_id) {
-                            $('#alert-merek_id-edit2').removeClass('d-none');
-                            $('#alert-merek_id-edit2').addClass('d-block');
-                            $('#alert-merek_id-edit2').html(error.responseJSON.merek_id[0]);
-                        }
-                        if (error.responseJSON.jenis_id) {
-                            $('#alert-jenis_id-edit2').removeClass('d-none');
-                            $('#alert-jenis_id-edit2').addClass('d-block');
-                            $('#alert-jenis_id-edit2').html(error.responseJSON.jenis_id[0]);
-                        }
-                        if (error.responseJSON.supliyer_id) {
-                            $('#alert-supliyer_id-edit2').removeClass('d-none');
-                            $('#alert-supliyer_id-edit2').addClass('d-block');
-                            $('#alert-supliyer_id-edit2').html(error.responseJSON.supliyer_id[
-                                0]);
-                        }
-                        if (error.responseJSON.stok) {
-                            $('#alert-stok-edit2').removeClass('d-none');
-                            $('#alert-stok-edit2').addClass('d-block');
-                            $('#alert-stok-edit2').html(error.responseJSON.stok[0]);
-                        }
-                        if (error.responseJSON.harga_jual) {
-                            $('#alert-harga_jual-edit2').removeClass('d-none');
-                            $('#alert-harga_jual-edit2').addClass('d-block');
-                            $('#alert-harga_jual-edit2').html(error.responseJSON.harga_jual[0]);
-                        }
-                        if (error.responseJSON.harga_beli) {
-                            $('#alert-harga_beli-edit2').removeClass('d-none');
-                            $('#alert-harga_beli-edit2').addClass('d-block');
-                            $('#alert-harga_beli-edit2').html(error.responseJSON.harga_beli[0]);
-                        }
-                        if (error.responseJSON.diskon) {
-                            $('#alert-diskon-edit2').removeClass('d-none');
-                            $('#alert-diskon-edit2').addClass('d-block');
-                            $('#alert-diskon-edit2').html(error.responseJSON.diskon[0]);
-                        }
-                        if (error.responseJSON.tgl_exp) {
-                            $('#alert-tgl_exp-edit2').removeClass('d-none');
-                            $('#alert-tgl_exp-edit2').addClass('d-block');
-                            $('#alert-tgl_exp-edit2').html(error.responseJSON.tgl_exp[0]);
-                        }
+                            if (error.responseJSON && error.responseJSON.errors) {
+                                let errorMessages = '';
 
-                    }
+                                // Loop melalui semua error dan tambahkan ke pesan
+                                $.each(error.responseJSON.errors, function(key, messages) {
+                                    errorMessages += messages[0] + '<br>';
+                                });
+
+                                // Tampilkan SweetAlert dengan pesan error
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Validasi Gagal!',
+                                    html: errorMessages,
+                                });
+                            } else {
+                                // Tangani error umum
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Terjadi kesalahan!',
+                                    text: 'Tidak dapat memproses permintaan.',
+                                });
+                            }
+                        }
                 });
             });
         });

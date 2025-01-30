@@ -12,7 +12,7 @@
         <!-- Tombol Kembali -->
         <a href="{{ route('kasir.kasir') }}" class="btn btn-primary btn-icon-split">
             <span class="icon text-white-50">
-                <i class="fas fa-arrow-left "></i>
+                <i class="fas fa-arrow-left  "></i>
             </span>
             <span class="text">JENIS PRODUK</span>
         </a>
@@ -88,11 +88,12 @@
                 }, {
                     data: 'name',
                     name: 'name'
-                },{
+                }, {
                     data: 'img',
                     name: 'img',
                     render: function(data, type, full, meta) {
-                        return '<img src="/images/' + data + '" alt="Image" widht="100px" height="100px">';
+                        return '<img src="/images/' + data +
+                            '" alt="Image" widht="100px" height="100px">';
                     }
                 }, {
                     data: 'action',
@@ -158,21 +159,27 @@
                     // Mengambil data terbaru setelah memasukkan data baru
                 },
                 error: function(error) {
-                    if (error.responseJSON.name[0]) {
-                        // Show alert
-                        $('#alert-name').removeClass('d-none');
-                        $('#alert-name').addClass('d-block');
+                    if (error.responseJSON && error.responseJSON.errors) {
+                        let errorMessages = '';
 
-                        // Add message to alert
-                        $('#alert-name').html(error.responseJSON.name[0]);
-                    }
-                    if (error.responseJSON.img[0]) {
-                        // Show alert
-                        $('#alert-img').removeClass('d-none');
-                        $('#alert-img').addClass('d-block');
+                        // Loop melalui semua error dan tambahkan ke pesan
+                        $.each(error.responseJSON.errors, function(key, messages) {
+                            errorMessages += messages[0] + '<br>';
+                        });
 
-                        // Add message to alert
-                        $('#alert-img').html(error.responseJSON.img[0]);
+                        // Tampilkan SweetAlert dengan pesan error
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Validasi Gagal!',
+                            html: errorMessages,
+                        });
+                    } else {
+                        // Tangani error umum
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Terjadi kesalahan!',
+                            text: 'Tidak dapat memproses permintaan.',
+                        });
                     }
                 }
             });
@@ -190,6 +197,16 @@
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    // Menampilkan loading indikator saat penghapusan berlangsung
+                    Swal.fire({
+                        title: 'Menghapus...',
+                        text: 'Mohon tunggu, data sedang dihapus.',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
                     $.ajax({
                         url: '/jenis/delete/' + id,
                         type: 'DELETE',
@@ -198,20 +215,45 @@
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
                         success: function(response) {
+                            if (response.status === "success") {
+                                Swal.fire({
+                                    title: 'Sukses!',
+                                    text: response.message,
+                                    icon: 'success',
+                                    timer: 2000
+                                });
+
+                                // Cek jika DataTable sudah ada sebelum melakukan reload
+                                var dataTable = $('#dataTable').DataTable();
+                                if ($.fn.DataTable.isDataTable('#dataTable')) {
+                                    dataTable.ajax.reload(null, false);
+                                }
+                            } else {
+                                Swal.fire({
+                                    title: 'Gagal!',
+                                    text: response.message,
+                                    icon: 'error'
+                                });
+                            }
+                        },
+                        error: function(xhr) {
+                            let errorMessage = "Terjadi kesalahan saat menghapus data.";
+
+                            if (xhr.responseJSON && xhr.responseJSON.message) {
+                                errorMessage = xhr.responseJSON.message;
+                            }
+
                             Swal.fire({
-                                title: 'Sukses',
-                                text: response.message,
-                                icon: 'success',
-                                timer: 2000
+                                title: 'Error!',
+                                text: errorMessage,
+                                icon: 'error'
                             });
-                            var dataTable = $('#dataTable').DataTable();
-                            dataTable.ajax.reload(null, false);
-                            // Mengambil data terbaru setelah menghapus
                         }
                     });
                 }
             });
         }
+
 
         $('body').on('click', '#btn-edit-post', function() {
             let user_id = $(this).data('id');
@@ -379,24 +421,27 @@
                         // Mengambil data terbaru setelah edit
                     },
                     error: function(error) {
-                        if (error.responseJSON.name) {
-                            // Show alert
-                            $('#alert-name-edit2').removeClass('d-none');
-                            $('#alert-name-edit2').addClass('d-block');
+                        if (error.responseJSON && error.responseJSON.errors) {
+                            let errorMessages = '';
 
-                            // Add message to alert
-                            $('#alert-name-edit2').html(error.responseJSON.name[0]);
-                        }
+                            // Loop melalui semua error dan tambahkan ke pesan
+                            $.each(error.responseJSON.errors, function(key, messages) {
+                                errorMessages += messages[0] + '<br>';
+                            });
 
-                        // Similarly for other fields (img, waktu, harga)
-
-                        if (error.responseJSON.img) {
-                            // Show alert
-                            $('#alert-img-edit2').removeClass('d-none');
-                            $('#alert-img-edit2').addClass('d-block');
-
-                            // Add message to alert
-                            $('#alert-img-edit2').html(error.responseJSON.img[0]);
+                            // Tampilkan SweetAlert dengan pesan error
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Validasi Gagal!',
+                                html: errorMessages,
+                            });
+                        } else {
+                            // Tangani error umum
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Terjadi kesalahan!',
+                                text: 'Tidak dapat memproses permintaan.',
+                            });
                         }
                     }
                 });

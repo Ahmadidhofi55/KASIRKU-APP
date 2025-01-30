@@ -10,74 +10,79 @@ use Illuminate\Support\Facades\Validator;
 
 class MerekController extends Controller
 {
-      //menampilkan data di index
-      public  function index(){
+    //menampilkan data di index
+    public  function index()
+    {
         return view('merek.index');
     }
 
-     //menmapilkan data melalui ajax
-     public function get(Request $request)
-     {
-         if ($request->ajax()) {
-             $data = Merek::latest()->get();
-             return DataTables::of($data)
-                 ->addIndexColumn()
-                 ->addColumn('action', function ($row) {
-                     $actionBtn = '<a href="javascript:void(0)" id="btn-edit-post" data-id="' . $row->id . '" class="edit btn btn-success btn-sm"><i class="fas fa-eye"></i></a> <a href="javascript:void(0)" data-id="' . $row->id . '" id="btn-edit-post2" class="edit btn btn-primary btn-sm"><i class="fas fa-edit"></i></a> <button onclick="deleteData(' . $row->id . ')" class="delete btn btn-danger btn-sm mr-2"><i class="fas fa-trash"></i></button>';
-                     return $actionBtn;
-                 })
-                 ->rawColumns(['action'])
-                 ->make(true);
-         }
-     }
+    //menmapilkan data melalui ajax
+    public function get(Request $request)
+    {
+        if ($request->ajax()) {
+            $data = Merek::latest()->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    $actionBtn = '<a href="javascript:void(0)" id="btn-edit-post" data-id="' . $row->id . '" class="edit btn btn-success btn-sm"><i class="fas fa-eye"></i></a> <a href="javascript:void(0)" data-id="' . $row->id . '" id="btn-edit-post2" class="edit btn btn-primary btn-sm"><i class="fas fa-edit"></i></a> <button onclick="deleteData(' . $row->id . ')" class="delete btn btn-danger btn-sm mr-2"><i class="fas fa-trash"></i></button>';
+                    return $actionBtn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+    }
 
-     //input data kedalam database
-     public function store(Request $request)
-     {
-         // define validation rules
-         $validator = Validator::make($request->all(), [
-             'name' => 'required',
-             'img' => 'required|image|mimes:png,jpg,svg,jfif|max:2048',
-         ]);
+    //input data kedalam database
+    public function store(Request $request)
+    {
+        // define validation rules
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'img' => 'required|image|mimes:png,jpg,svg,jfif|max:2048',
+        ]);
 
-         // check if validation fails
-         if ($validator->fails()) {
-             return response()->json($validator->errors(), 422);
-         }
+        // check if validation fails
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi Gagal!',
+                'errors' => $validator->errors()
+            ], 422);
+        }
 
-         // process the image
-         if ($request->hasFile('img')) {
-             $image = $request->file('img');
-             $imageName = time() . '_' . $image->getClientOriginalName();
-             $image->move(public_path('images'), $imageName);
-         } else {
-             $imageName = null;
-         }
-         // create user
-         $merek = Merek::create([
-             'name' => $request->name,
-             'img' => $imageName,
-         ]);
+        // process the image
+        if ($request->hasFile('img')) {
+            $image = $request->file('img');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            $image->move(public_path('images'), $imageName);
+        } else {
+            $imageName = null;
+        }
+        // create user
+        $merek = Merek::create([
+            'name' => $request->name,
+            'img' => $imageName,
+        ]);
 
-         // return response
-         return response()->json([
-             'success' => true,
-             'message' => 'Data Berhasil Disimpan!',
-             'data' => $merek
-         ]);
-     }
+        // return response
+        return response()->json([
+            'success' => true,
+            'message' => 'Data Berhasil Disimpan!',
+            'data' => $merek
+        ]);
+    }
 
-          /**
+    /**
      * Display the specified resource.
      */
-     public function show($id)
+    public function show($id)
     {
         $jenis = Merek::find($id);
 
         return response()->json($jenis);
     }
 
-      /**
+    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id)
@@ -101,7 +106,11 @@ class MerekController extends Controller
 
         // Check if validation fails
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi Gagal!',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
         // Process the image
@@ -139,18 +148,32 @@ class MerekController extends Controller
      */
     public function destroy($id)
     {
-        $Merek = Merek::findOrFail($id);
+        try {
+            // Cek apakah merek ada di database
+            $merek = Merek::findOrFail($id);
 
-        // Delete the associated image if it exists
-        if ($Merek->img) {
-            $imagePath = public_path('images') . '/' . $Merek->img;
-            if (file_exists($imagePath)) {
-                unlink($imagePath);
+            // Hapus gambar jika ada
+            if (!empty($merek->img)) {
+                $imagePath = public_path('images') . '/' . $merek->img;
+
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
             }
+
+            // Hapus data dari database
+            $merek->delete();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Merek Produk Berhasil Dihapus'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menghapus merek produk. Terjadi kesalahan!',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        $Merek->delete();
-
-        return response()->json(['message' => 'Merek Produk Berhasil Dihapus']);
     }
 }

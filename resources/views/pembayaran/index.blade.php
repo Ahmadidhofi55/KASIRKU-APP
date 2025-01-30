@@ -89,14 +89,15 @@
                 }, {
                     data: 'name',
                     name: 'name'
-                },{
+                }, {
                     data: 'data_pembayaran',
                     name: 'data_pembayaran'
-                },{
+                }, {
                     data: 'img',
                     name: 'img',
                     render: function(data, type, full, meta) {
-                        return '<img src="/images/' + data + '" alt="Image" widht="100px" height="100px">';
+                        return '<img src="/images/' + data +
+                            '" alt="Image" widht="100px" height="100px">';
                     }
                 }, {
                     data: 'action',
@@ -165,68 +166,92 @@
                     // Mengambil data terbaru setelah memasukkan data baru
                 },
                 error: function(error) {
-                    if (error.responseJSON.name[0]) {
-                        // Show alert
-                        $('#alert-name').removeClass('d-none');
-                        $('#alert-name').addClass('d-block');
+                    if (error.responseJSON && error.responseJSON.errors) {
+                        let errorMessages = '';
 
-                        // Add message to alert
-                        $('#alert-name').html(error.responseJSON.name[0]);
-                    }
-                    if (error.responseJSON.data_pembayaran[0]) {
-                        // Show alert
-                        $('#alert-data_pembayaran').removeClass('d-none');
-                        $('#alert-data_pembayaran').addClass('d-block');
+                        // Loop melalui semua error dan tambahkan ke pesan
+                        $.each(error.responseJSON.errors, function(key, messages) {
+                            errorMessages += messages[0] + '<br>';
+                        });
 
-                        // Add message to alert
-                        $('#alert-data_pembayaran').html(error.responseJSON.data_pembayaran[0]);
-                    }
-                    if (error.responseJSON.img[0]) {
-                        // Show alert
-                        $('#alert-img').removeClass('d-none');
-                        $('#alert-img').addClass('d-block');
-
-                        // Add message to alert
-                        $('#alert-img').html(error.responseJSON.img[0]);
+                        // Tampilkan SweetAlert dengan pesan error
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Validasi Gagal!',
+                            html: errorMessages,
+                        });
+                    } else {
+                        // Tangani error umum
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Terjadi kesalahan!',
+                            text: 'Tidak dapat memproses permintaan.',
+                        });
                     }
                 }
             });
         });
 
         function deleteData(id) {
+    Swal.fire({
+        title: 'Konfirmasi',
+        text: 'Apakah Anda yakin ingin menghapus data ini?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Hapus',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Tampilkan loader sebelum menghapus data
             Swal.fire({
-                title: 'Konfirmasi',
-                text: 'Apakah Anda yakin ingin menghapus data ini?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Hapus',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: '/pembayaran/delete/' + id,
-                        type: 'DELETE',
-                        dataType: 'json',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        success: function(response) {
-                            Swal.fire({
-                                title: 'Sukses',
-                                text: response.message,
-                                icon: 'success',
-                                timer: 2000
-                            });
-                            var dataTable = $('#dataTable').DataTable();
-                            dataTable.ajax.reload(null, false);
-                            // Mengambil data terbaru setelah menghapus
-                        }
+                title: 'Menghapus...',
+                text: 'Mohon tunggu, data sedang dihapus.',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            $.ajax({
+                url: '/pembayaran/delete/' + id,
+                type: 'DELETE',
+                dataType: 'json',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    Swal.fire({
+                        title: 'Sukses',
+                        text: response.message,
+                        icon: 'success',
+                        timer: 1500
+                    });
+
+                    // Reload DataTable jika ada
+                    var dataTable = $('#dataTable').DataTable();
+                    if (dataTable) {
+                        dataTable.ajax.reload(null, false);
+                    }
+                },
+                error: function(xhr) {
+                    let errorMessage = "Terjadi kesalahan saat menghapus data.";
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+
+                    Swal.fire({
+                        title: 'Error!',
+                        text: errorMessage,
+                        icon: 'error'
                     });
                 }
             });
         }
+    });
+}
+
 
         $('body').on('click', '#btn-edit-post', function() {
             let user_id = $(this).data('id');
@@ -271,7 +296,7 @@
                 cache: false,
                 data: {
                     "name": name,
-                    "data_pembayaran":data_pembayaran,
+                    "data_pembayaran": data_pembayaran,
                     "img": img,
                     "_token": token,
                 },
@@ -409,33 +434,27 @@
                         // Mengambil data terbaru setelah edit
                     },
                     error: function(error) {
-                        if (error.responseJSON.name) {
-                            // Show alert
-                            $('#alert-name-edit2').removeClass('d-none');
-                            $('#alert-name-edit2').addClass('d-block');
+                        if (error.responseJSON && error.responseJSON.errors) {
+                            let errorMessages = '';
 
-                            // Add message to alert
-                            $('#alert-name-edit2').html(error.responseJSON.name[0]);
-                        }
+                            // Loop melalui semua error dan tambahkan ke pesan
+                            $.each(error.responseJSON.errors, function(key, messages) {
+                                errorMessages += messages[0] + '<br>';
+                            });
 
-                        if (error.responseJSON.data_pembayaran) {
-                            // Show alert
-                            $('#alert-data_pembayaran-edit2').removeClass('d-none');
-                            $('#alert-data_pembayaran-edit2').addClass('d-block');
-
-                            // Add message to alert
-                            $('#alert-data_pembayaran-edit2').html(error.responseJSON.name[0]);
-                        }
-
-                        // Similarly for other fields (img, waktu, harga)
-
-                        if (error.responseJSON.img) {
-                            // Show alert
-                            $('#alert-img-edit2').removeClass('d-none');
-                            $('#alert-img-edit2').addClass('d-block');
-
-                            // Add message to alert
-                            $('#alert-img-edit2').html(error.responseJSON.img[0]);
+                            // Tampilkan SweetAlert dengan pesan error
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Validasi Gagal!',
+                                html: errorMessages,
+                            });
+                        } else {
+                            // Tangani error umum
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Terjadi kesalahan!',
+                                text: 'Tidak dapat memproses permintaan.',
+                            });
                         }
                     }
                 });

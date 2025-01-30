@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Validator;
 class PembayaranController extends Controller
 {
     //menampilkan data di index
-    public  function index(){
+    public  function index()
+    {
         return view('pembayaran.index');
     }
 
@@ -30,7 +31,7 @@ class PembayaranController extends Controller
         }
     }
 
-      public function store(Request $request)
+    public function store(Request $request)
     {
         // define validation rules
         $validator = Validator::make($request->all(), [
@@ -41,7 +42,11 @@ class PembayaranController extends Controller
 
         // check if validation fails
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi Gagal!',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
         // process the image
@@ -55,7 +60,7 @@ class PembayaranController extends Controller
         // create user
         $pembayarans = Pembayaran::create([
             'name' => $request->name,
-            'data_pembayaran'=>$request->data_pembayaran,
+            'data_pembayaran' => $request->data_pembayaran,
             'img' => $imageName,
         ]);
 
@@ -67,7 +72,7 @@ class PembayaranController extends Controller
         ]);
     }
 
-     /**
+    /**
      * Display the specified resource.
      */
     public function show($id)
@@ -77,7 +82,7 @@ class PembayaranController extends Controller
         return response()->json($pembayarans);
     }
 
-      /**
+    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id)
@@ -102,7 +107,11 @@ class PembayaranController extends Controller
 
         // Check if validation fails
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi Gagal!',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
         // Process the image
@@ -141,18 +150,31 @@ class PembayaranController extends Controller
      */
     public function destroy($id)
     {
-        $pembayarans = Pembayaran::findOrFail($id);
+        try {
+            $pembayaran = Pembayaran::findOrFail($id);
 
-        // Delete the associated image if it exists
-        if ($pembayarans->img) {
-            $imagePath = public_path('images') . '/' . $pembayarans->img;
-            if (file_exists($imagePath)) {
-                unlink($imagePath);
+            // Cek dan hapus gambar jika ada
+            if (!empty($pembayaran->img)) {
+                $imagePath = public_path('images') . '/' . $pembayaran->img;
+
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
             }
+
+            // Hapus data pembayaran dari database
+            $pembayaran->delete();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Pembayaran berhasil dihapus'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menghapus pembayaran. Terjadi kesalahan!',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        $pembayarans->delete();
-
-        return response()->json(['message' => 'Pembayaran deleted successfully']);
     }
 }

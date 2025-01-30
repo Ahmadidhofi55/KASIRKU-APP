@@ -39,10 +39,10 @@ class ProdukController extends Controller
                 })
                 ->addColumn('action', function ($row) {
                     $actionBtn = '
-                          <a href="javascript:void(0)" id="btn-view-post" data-id="' . $row->id . '" class="view btn btn-success btn-sm">
+                          <a href="javascript:void(0)" id="btn-edit-post" data-id="' . $row->id . '" class="edit btn btn-success btn-sm">
                             <i class="fas fa-eye"></i>
                         </a>
-                        <a href="javascript:void(0)" data-id="' . $row->id . '" id="btn-edit-post" class="edit btn btn-primary btn-sm">
+                        <a href="javascript:void(0)" data-id="' . $row->id . '" id="btn-edit-post2" class="edit btn btn-primary btn-sm">
                             <i class="fas fa-edit"></i>
                         </a>
                         <button onclick="deleteData(' . $row->id . ')" class="delete btn btn-danger btn-sm mr-2">

@@ -9,6 +9,7 @@
                 </button>
             </div>
             <div class="modal-body">
+                <div class="skeleton-loading">Loading...</div>
                 <input type="hidden" id="user_id">
                 <div class="form-group">
                     <label for="name-edit" class="control-label">Name</label>

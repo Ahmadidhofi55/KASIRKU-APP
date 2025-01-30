@@ -406,15 +406,51 @@
         }
 
         $('body').on('click', '#btn-edit-post', function() {
-    let user_id = $(this).data('id');
+            let user_id = $(this).data('id');
 
-    // Fetch detail post with ajax
-    $.ajax({
-        url: `/produk/show/${user_id}`,
-        type: "GET",
-        cache: false,
-        success: function(response) {
+            // Cek apakah data merek, jenis, dan supliyer sudah ada di local storage
+            let mereks = JSON.parse(localStorage.getItem('mereks'));
+            let jeniss = JSON.parse(localStorage.getItem('jeniss'));
+            let supliyers = JSON.parse(localStorage.getItem('supliyers'));
+
+            // Jika data belum ada, ambil dari server
+            if (!mereks || !jeniss || !supliyers) {
+                Promise.all([
+                    $.get('/api/merek'),
+                    $.get('/api/jenis'),
+                    $.get('/api/supliyer')
+                ]).then(([mereksData, jenissData, supliyersData]) => {
+                    // Simpan data ke local storage
+                    localStorage.setItem('mereks', JSON.stringify(mereksData));
+                    localStorage.setItem('jeniss', JSON.stringify(jenissData));
+                    localStorage.setItem('supliyers', JSON.stringify(supliyersData));
+
+                    // Lanjutkan proses dengan data yang sudah diambil
+                    fetchProdukData(user_id, mereksData, jenissData, supliyersData);
+                }).catch(error => {
+                    console.log("Terjadi kesalahan dalam permintaan Ajax:", error);
+                });
+            } else {
+                // Jika data sudah ada, langsung lanjutkan proses
+                fetchProdukData(user_id, mereks, jeniss, supliyers);
+            }
+        });
+
+        function fetchProdukData(user_id, mereks, jeniss, supliyers) {
+            $.ajax({
+                url: `/produk/show/${user_id}`,
+                type: "GET",
+                cache: false
+            }).then(response => {
+                populateModal(response, mereks, jeniss, supliyers);
+            }).catch(error => {
+                console.log("Terjadi kesalahan dalam permintaan Ajax:", error);
+            });
+        }
+
+        function populateModal(response, mereks, jeniss, supliyers) {
             // Fill data to form
+            $('.skeleton-loading').hide();
             $('#user_id').val(response.id);
             $('#name-edit').val(response.name);
             $('#qr_produk-edit').val(response.qr_produk);
@@ -426,31 +462,24 @@
             $('#diskon-edit').val(response.diskon);
             $('#tgl_exp-edit').val(response.tgl_exp);
 
-            // Fetch and populate dropdowns for merek, jenis, and supliyer
-            $.get('/api/merek', function(mereks) {
-                let merekOptions = mereks.map(merek => `<option value="${merek.id}" ${merek.id == response.merek_id ? 'selected' : ''}>${merek.name}</option>`);
-                $('#merek_id-edit').html(merekOptions);
-            });
+            // Populate dropdowns efficiently
+            const populateSelect = (selector, data, selectedId) => {
+                let options = '<option value="" disabled>Pilih</option>';
+                data.forEach(item => {
+                    options +=
+                        `<option value="${item.id}" ${item.id == selectedId ? 'selected' : ''}>${item.name}</option>`;
+                });
+                $(selector).html(options).prop('disabled', false); // Aktifkan dropdown setelah diisi
+            };
 
-            $.get('/api/jenis', function(jeniss) {
-                let jenisOptions = jeniss.map(jenis => `<option value="${jenis.id}" ${jenis.id == response.jenis_id ? 'selected' : ''}>${jenis.name}</option>`);
-                $('#jenis_id-edit').html(jenisOptions);
-            });
-
-            $.get('/api/supliyer', function(supliyers) {
-                let supliyerOptions = supliyers.map(supliyer => `<option value="${supliyer.id}" ${supliyer.id == response.supliyer_id ? 'selected' : ''}>${supliyer.name}</option>`);
-                $('#supliyer_id-edit').html(supliyerOptions);
-            });
+            populateSelect('#merek_id-edit', mereks, response.merek_id);
+            populateSelect('#jenis_id-edit', jeniss, response.jenis_id);
+            populateSelect('#supliyer_id-edit', supliyers, response.supliyer_id);
 
             // Open modal
             $('#modal-edit').modal('show');
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            // Handle error case
-            console.log("Terjadi kesalahan dalam permintaan Ajax:", textStatus, errorThrown);
         }
-    });
-});
+
 
 
         // Action update post

@@ -558,37 +558,58 @@
 
 
         $(document).ready(function() {
-            // ...
+            // Function to fetch and populate select options
+            function fetchOptions(url, selectElement, selectedId) {
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    success: function(response) {
+                        selectElement.empty();
+                        selectElement.append('<option value="">Pilih</option>');
+                        response.forEach(function(item) {
+                            let selected = item.id == selectedId ? 'selected' : '';
+                            selectElement.append(
+                                `<option value="${item.id}" ${selected}>${item.name}</option>`
+                            );
+                        });
+                    },
+                    error: function(error) {
+                        console.log("Gagal mengambil data dari " + url, error);
+                    }
+                });
+            }
+
             $('body').on('click', '#btn-edit-post2', function() {
                 let produk_id = $(this).data('id');
 
-                // Fetch detail post with ajax
+                // Fetch product details
                 $.ajax({
                     url: `/produk/show/${produk_id}`,
                     type: "GET",
                     cache: false,
                     success: function(response) {
-                        // Fill data to form
                         $('#produk_id2').val(response.id);
                         $('#name-edit2').val(response.name);
                         $('#qr_produk-edit2').val(response.qr_produk);
-                        $('#qr_img-edit2').val(''); // Reset QR Image file input
+                        $('#qr_img-edit2').val('');
                         $('#qr-img-preview').attr('src', '/images/' + response.qr_img);
-                        $('#img-edit2').val(''); // Reset Image file input
+                        $('#img-edit2').val('');
                         $('#img-preview').attr('src', '/images/' + response.img);
-                        $('#merek_id-edit2').val(response.merek_id);
-                        $('#jenis_id-edit2').val(response.jenis_id);
-                        $('#supliyer_id-edit2').val(response.supliyer_id);
                         $('#stok-edit2').val(response.stok);
                         $('#harga_jual-edit2').val(response.harga_jual);
                         $('#harga_beli-edit2').val(response.harga_beli);
                         $('#diskon-edit2').val(response.diskon);
                         $('#tgl_exp-edit2').val(response.tgl_exp);
-                        // Open modal
+
+                        // Fetch select options
+                        fetchOptions('/api/merek', $('#merek_id-edit2'), response.merek_id);
+                        fetchOptions('/api/jenis', $('#jenis_id-edit2'), response.jenis_id);
+                        fetchOptions('/api/supliyer', $('#supliyer_id-edit2'), response
+                            .supliyer_id);
+
                         $('#modal-edit2').modal('show');
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
-                        // Handle error case
                         console.log("Terjadi kesalahan dalam permintaan Ajax:", textStatus,
                             errorThrown);
                     }
@@ -618,18 +639,18 @@
 
                 let formData = new FormData();
                 formData.append("produk_id", produk_id);
-                formData.append("name", name);
-                formData.append("qr_produk", qr_produk);
-                formData.append("qr_img", qr_img); // Append the QR image file
-                formData.append("img", img); // Append the image file
-                formData.append("merek_id", merek_id);
-                formData.append("jenis_id", jenis_id);
-                formData.append("supliyer_id", supliyer_id);
-                formData.append("stok", stok);
-                formData.append("harga_jual", harga_jual);
-                formData.append("harga_beli", harga_beli);
-                formData.append("diskon", diskon);
-                formData.append("tgl_exp", tgl_exp);
+                formData.append("name-edit2", name);
+                formData.append("qr_produk-edit2", qr_produk);
+                formData.append("qr_img-edit2", qr_img); // Append the QR image file
+                formData.append("img-edit2", img); // Append the image file
+                formData.append("merek_id-edit2", merek_id);
+                formData.append("jenis_id-edit2", jenis_id);
+                formData.append("supliyer_id-edit2", supliyer_id);
+                formData.append("stok-edit2", stok);
+                formData.append("harga_jual-edit2", harga_jual);
+                formData.append("harga_beli-edit2", harga_beli);
+                formData.append("diskon-edit2", diskon);
+                formData.append("tgl_exp-edit2", tgl_exp);
                 formData.append("_token", token);
                 // Ajax
                 $.ajax({

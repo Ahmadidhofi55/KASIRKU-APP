@@ -142,11 +142,11 @@ class ProdukController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Find the user by ID
-        $user = Produk::find($id);
+        // Find the product by ID
+        $produk = Produk::find($id);
 
-        // Check if the user exists
-        if (!$user) {
+        // Check if the product exists
+        if (!$produk) {
             return response()->json([
                 'success' => false,
                 'message' => 'Produk not found'
@@ -155,19 +155,18 @@ class ProdukController extends Controller
 
         // Define validation rules
         $validator = Validator::make($request->all(), [
-            'name-edit2' => 'required' . $user->id,
-            'qr_produk-edit2' => 'required' . $user->id,
-            'qr_img-edit2' => 'required|image|mimes:png,jpg' . $user->id,
-            'img-edit2' => 'required|image|mimes:png,jpg,svg,jfif|max:2048' . $user->id,
-            'merek_id-edit2' => 'required' . $user->id,
-            'jenis_id-edit2' => 'required' . $user->id,
-            'supliyer_id-edit2' => 'required' . $user->id,
-            'stok-edit2' => 'required' . $user->id,
-            'harga_jual-edit2' => 'required' . $user->id,
-            'harga_beli-edit2' => 'required' . $user->id,
-            'diskon-edit2' => 'required' . $user->id,
-            'tgl_exp-edit2' => 'required' . $user->id,
-
+            'name-edit2' => '',
+            'qr_produk-edit2' => '',
+            'qr_img-edit2' => '',
+            'img-edit2' => '',
+            'merek_id-edit2' => 'integer',
+            'jenis_id-edit2' => 'integer',
+            'supliyer_id-edit2' => 'integer',
+            'stok-edit2' => 'integer|min:0',
+            'harga_jual-edit2' => 'numeric|min:0',
+            'harga_beli-edit2' => 'numeric|min:0',
+            'diskon-edit2' => '',
+            'tgl_exp-edit2' => 'date',
         ]);
 
         // Check if validation fails
@@ -175,48 +174,59 @@ class ProdukController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        // Process the image
         if ($request->hasFile('qr_img-edit2')) {
             // Hapus gambar lama jika ada
-            if ($user->qr_img) {
-                $oldImagePath = public_path('images') . '/' . $user->qr_img;
+            if ($produk->qr_img) {
+                $oldImagePath = public_path('images') . '/' . $produk->qr_img;
                 if (file_exists($oldImagePath)) {
                     unlink($oldImagePath);
                 }
             }
 
-            $image2 = $request->file('qr_img-edit2');
-            $imageName2 = time() . '_' . $image2->getClientOriginalName();
-            $image2->move(public_path('images'), $imageName2);
-            $user->qr_img = $imageName2; // Update kolom gambar dengan nama gambar baru
+            $qrImage = $request->file('qr_img-edit2');
+            $qrImageName = time() . '_qr_' . $qrImage->getClientOriginalName();
+            $qrImage->move(public_path('images'), $qrImageName);
+            $produk->qr_img = $qrImageName; // Update kolom gambar QR
         }
 
         if ($request->hasFile('img-edit2')) {
             // Hapus gambar lama jika ada
-            if ($user->img) {
-                $oldImagePath = public_path('images') . '/' . $user->img;
+            if ($produk->img) {
+                $oldImagePath = public_path('images') . '/' . $produk->img;
                 if (file_exists($oldImagePath)) {
                     unlink($oldImagePath);
                 }
             }
 
             $image = $request->file('img-edit2');
-            $imageName = time() . '_' . $image->getClientOriginalName();
+            $imageName = time() . '_img_' . $image->getClientOriginalName();
             $image->move(public_path('images'), $imageName);
-            $user->img = $imageName; // Update kolom gambar dengan nama gambar baru
+            $produk->img = $imageName; // Update kolom gambar utama
         }
 
-        // Update the user
-        $user->name = $request->name;
-        $user->save();
+        // Update the product
+        $produk->name = $request->input('name-edit2', $produk->name); // Fallback to existing value if null
+        $produk->qr_produk = $request->input('qr_produk-edit2', $produk->qr_produk);
+        $produk->merek_id = $request->input('merek_id-edit2', $produk->merek_id);
+        $produk->jenis_id = $request->input('jenis_id-edit2', $produk->jenis_id);
+        $produk->supliyer_id = $request->input('supliyer_id-edit2', $produk->supliyer_id);
+        $produk->stok = $request->input('stok-edit2', $produk->stok);
+        $produk->harga_jual = $request->input('harga_jual-edit2', $produk->harga_jual);
+        $produk->harga_beli = $request->input('harga_beli-edit2', $produk->harga_beli);
+        $produk->diskon = $request->input('diskon-edit2', $produk->diskon);
+        $produk->tgl_exp = $request->input('tgl_exp-edit2', $produk->tgl_exp);
+
+        $produk->save();
+
 
         // Return response
         return response()->json([
             'success' => true,
             'message' => 'Produk Berhasil Diupdate!',
-            'data' => $user,
+            'data' => $produk,
         ]);
     }
+
 
 
 

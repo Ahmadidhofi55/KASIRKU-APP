@@ -91,7 +91,10 @@
                 ajax: "{{ route('produk.read') }}",
                 columns: [{
                         data: 'DT_RowIndex',
-                        name: 'DT_RowIndex'
+                        name: 'DT_RowIndex ',
+                        render: function(data, type, row, meta) {
+                        return meta.row + 1 + '.';
+                    }
                     },
                     {
                         data: 'name',

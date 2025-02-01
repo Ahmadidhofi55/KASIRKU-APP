@@ -86,6 +86,12 @@ Route::post('/produk/store',[ProdukController::class,'store'])->name('produk.sto
 Route::post('/produk/update/{id}', [ProdukController::class, 'update'])->name('produk.update')->middleware('auth');
 Route::delete('/produk/delete/{id}',[ProdukController::class,'destroy'])->name('produk.destroy')->middleware('auth');
 
+//Produk Habis
+Route::get('/produkhabis',[ProdukController::class,'index2'])->name('produkhabis.index')->middleware('auth');
+Route::get('/produkhabis/read', [ProdukController::class,'get2'])->name('produkhabis.read')->middleware('auth');
+Route::get('/produkhabis/show/{id}',[ProdukController::class,'show'])->name('produkhabis.show')->middleware('auth');
+Route::post('/produkhabis/update/{id}', [ProdukController::class, 'update'])->name('produkhabis.update')->middleware('auth');
+
 //Supliyer
 Route::get('/supliyer',[SupliyerController::class,'index'])->name('supliyer.index')->middleware('auth');
 Route::get('/supliyer/read', [SupliyerController::class,'get'])->name('supliyer.read')->middleware('auth');

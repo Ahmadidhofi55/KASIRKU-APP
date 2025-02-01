@@ -19,6 +19,11 @@ class ProdukController extends Controller
         return view('produk.index');
     }
 
+    public  function index2()
+    {
+        return view('produkhabis.index');
+    }
+
 
     public function get(Request $request)
     {
@@ -54,6 +59,41 @@ class ProdukController extends Controller
                 ->make(true);
         }
     }
+
+    public function get2(Request $request)
+{
+    if ($request->ajax()) {
+        // Memuat hanya produk yang stoknya habis (stok == 0)
+        $data = Produk::with(['merek', 'jenis', 'supliyer'])
+            ->where('stok', 0) // Filter produk yang stoknya habis
+            ->latest()
+            ->get();
+
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('merek', function ($row) {
+                return $row->merek->name ?? '-'; // Mengambil nama merek
+            })
+            ->addColumn('jenis', function ($row) {
+                return $row->jenis->name ?? '-'; // Mengambil nama jenis
+            })
+            ->addColumn('supliyer', function ($row) {
+                return $row->supliyer->name ?? '-'; // Mengambil nama supliyer
+            })
+            ->addColumn('action', function ($row) {
+                $actionBtn = '
+                      <a href="javascript:void(0)" id="btn-edit-post" data-id="' . $row->id . '" class="edit btn btn-success btn-sm">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                    <a href="javascript:void(0)" data-id="' . $row->id . '" id="btn-edit-post2" class="edit btn btn-primary btn-sm">
+                        <i class="fas fa-edit"></i>
+                    </a>';
+                return $actionBtn;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+    }
+}
 
 
     public function reading()

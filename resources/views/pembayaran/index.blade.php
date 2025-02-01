@@ -193,64 +193,64 @@
         });
 
         function deleteData(id) {
-    Swal.fire({
-        title: 'Konfirmasi',
-        text: 'Apakah Anda yakin ingin menghapus data ini?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Hapus',
-        cancelButtonText: 'Batal'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Tampilkan loader sebelum menghapus data
             Swal.fire({
-                title: 'Menghapus...',
-                text: 'Mohon tunggu, data sedang dihapus.',
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
-
-            $.ajax({
-                url: '/pembayaran/delete/' + id,
-                type: 'DELETE',
-                dataType: 'json',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
+                title: 'Konfirmasi',
+                text: 'Apakah Anda yakin ingin menghapus data ini?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Hapus',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Tampilkan loader sebelum menghapus data
                     Swal.fire({
-                        title: 'Sukses',
-                        text: response.message,
-                        icon: 'success',
-                        timer: 1500
+                        title: 'Menghapus...',
+                        text: 'Mohon tunggu, data sedang dihapus.',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
                     });
 
-                    // Reload DataTable jika ada
-                    var dataTable = $('#dataTable').DataTable();
-                    if (dataTable) {
-                        dataTable.ajax.reload(null, false);
-                    }
-                },
-                error: function(xhr) {
-                    let errorMessage = "Terjadi kesalahan saat menghapus data.";
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
-                        errorMessage = xhr.responseJSON.message;
-                    }
+                    $.ajax({
+                        url: '/pembayaran/delete/' + id,
+                        type: 'DELETE',
+                        dataType: 'json',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                title: 'Sukses',
+                                text: response.message,
+                                icon: 'success',
+                                timer: 1500
+                            });
 
-                    Swal.fire({
-                        title: 'Error!',
-                        text: errorMessage,
-                        icon: 'error'
+                            // Reload DataTable jika ada
+                            var dataTable = $('#dataTable').DataTable();
+                            if (dataTable) {
+                                dataTable.ajax.reload(null, false);
+                            }
+                        },
+                        error: function(xhr) {
+                            let errorMessage = "Terjadi kesalahan saat menghapus data.";
+                            if (xhr.responseJSON && xhr.responseJSON.message) {
+                                errorMessage = xhr.responseJSON.message;
+                            }
+
+                            Swal.fire({
+                                title: 'Error!',
+                                text: errorMessage,
+                                icon: 'error'
+                            });
+                        }
                     });
                 }
             });
         }
-    });
-}
 
 
         $('body').on('click', '#btn-edit-post', function() {
@@ -460,5 +460,33 @@
                 });
             });
         });
+
+        //logout
+        function logoutConfirmation() {
+            event.preventDefault(); // Mencegah tindakan default
+            Swal.fire({
+                title: 'Apakah Anda Yakin?',
+                text: 'Anda Akan Logout',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Logout'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Submit form logout
+                    document.getElementById('logout-form').submit();
+
+                    // Menampilkan pesan sukses
+                    Swal.fire({
+                        title: 'Sukses',
+                        text: 'Logout berhasil!',
+                        icon: 'success',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        }
     </script>
 @endsection

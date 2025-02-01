@@ -439,5 +439,33 @@
                 });
             });
         });
+
+         //logout
+         function logoutConfirmation() {
+            event.preventDefault(); // Mencegah tindakan default
+            Swal.fire({
+                title: 'Apakah Anda Yakin?',
+                text: 'Anda Akan Logout',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Logout'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Submit form logout
+                    document.getElementById('logout-form').submit();
+
+                    // Menampilkan pesan sukses
+                    Swal.fire({
+                        title: 'Sukses',
+                        text: 'Logout berhasil!',
+                        icon: 'success',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        }
     </script>
 @endsection

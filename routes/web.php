@@ -4,14 +4,16 @@ use App\Models\Jenis;
 use App\Models\Merek;
 use App\Models\Supliyer;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\JenisController;
 use App\Http\Controllers\MerekController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ProdukController;
-use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\SupliyerController;
+use App\Http\Controllers\PembayaranController;
 
 /*
 |--------------------------------------------------------------------------
@@ -107,3 +109,5 @@ Route::get('/api/jenis', function () {
 Route::get('/api/supliyer', function () {
     return Supliyer::all(['id', 'name']);
 });
+
+
